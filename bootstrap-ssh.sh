@@ -39,6 +39,11 @@ function enable_ssh {
     find $mount_dir/etc/rc* -name 'K*ssh' -exec sudo rm {} +
 }
 
+function disable_root_ssh {
+    echo "Disabling root login via SSH"
+    sudo sed -e 's@^[# ]*PermitRootLogin.*$@PermitRootLogin no@g' -i $mount_dir/etc/ssh/sshd_config
+}
+
 function cleanup {
     sudo umount $root
     sudo partx -d $loop_device
@@ -65,5 +70,6 @@ mount_image
 update_passwd
 remove_nopasswd_sudo
 enable_ssh
+disable_root_ssh
 cleanup
 burn_info
