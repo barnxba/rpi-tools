@@ -23,7 +23,7 @@ function mount_image {
 function update_passwd {
     echo "Setting new password for user pi"
     pass=$(openssl passwd -1)
-    sudo sed -i -e "s@\(^pi:\)\([^:]*\)\(.*$\)@\1${pass}\3@" $mount_dir/etc/shadow
+    sudo sed -i -e "s@^pi:[^:]\+@pi:${pass}@" $mount_dir/etc/shadow
 }
 
 function remove_nopasswd_sudo {
