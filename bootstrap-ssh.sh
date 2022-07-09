@@ -75,7 +75,7 @@ function burn_info {
     echo
     echo "To burn the image to sdcard (e.g. /dev/mmcblk0) use:"
     echo
-    echo "dd if=$image of=/dev/mmcblk0 bs=4M oflag=dsync status=progress"
+    echo "sudo dd if=$image of=/dev/mmcblk0 bs=4M oflag=dsync status=progress"
     echo
     echo "Bye!"
 }
