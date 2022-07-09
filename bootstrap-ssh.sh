@@ -44,6 +44,25 @@ function disable_root_ssh {
     sudo sed -e 's@^[# ]*PermitRootLogin.*$@PermitRootLogin no@g' -i $mount_dir/etc/ssh/sshd_config
 }
 
+function copy_ssh_key {
+    keyfile=~/.ssh/id_rsa.pub
+    if [ ! -f $keyfile ]; then
+        echo "Skipping SSH key copy -> no id_rsa.pub found in ~/.ssh"
+        return
+    fi
+    echo "Copying public key from $(whoami)"
+    ssh_dir=$mount_dir/home/pi/.ssh
+    auth_file=$ssh_dir/authorized_keys
+    if [ ! -d $ssh_dir ]; then
+        sudo mkdir $ssh_dir
+        sudo chmod 0700 $ssh_dir
+        sudo chown 1000:1000 $ssh_dir
+    fi
+    sudo cat $keyfile >> $auth_file
+    sudo chmod 0600 $auth_file
+    sudo chown 1000:1000 $auth_file
+}
+
 function cleanup {
     sudo umount $root
     sudo partx -d $loop_device
@@ -71,5 +90,6 @@ update_passwd
 remove_nopasswd_sudo
 enable_ssh
 disable_root_ssh
+copy_ssh_key
 cleanup
 burn_info
