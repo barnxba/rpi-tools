@@ -47,9 +47,23 @@ function cleanup {
     echo "Done"
 }
 
+function burn_info {
+    echo
+    echo "To burn the image to sdcard (e.g. /dev/mmcblk0) use:"
+    echo
+    echo "dd if=$image of=/dev/mmcblk0 bs=4M oflag=dsync progress=status"
+    echo
+    echo "Bye!"
+}
+
+function wait_for_keypress {
+    read -n1 -p "Press any key to continue..."
+}
+
 image="$1"
 mount_image
 update_passwd
 remove_nopasswd_sudo
 enable_ssh
 cleanup
+burn_info
