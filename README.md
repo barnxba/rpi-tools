@@ -15,5 +15,5 @@ Run the script:
 Burn the image onto your SD card:
     
     sudo dd if=2022-04-04-raspios-bullseye-armhf-lite.img of=/dev/mmcblk0 \
-        bs=4M oflag=dsync status=progress 
+        bs=4M oflag=dsync status=progress
 It will also remove the default *nopasswd* sudo access from **pi**.
