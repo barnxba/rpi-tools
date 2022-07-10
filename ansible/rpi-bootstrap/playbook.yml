@@ -16,7 +16,13 @@
   vars:
     - user: pi
     - release: focal
-    - basic_pkgs: [ 'apt-transport-https', 'ca-certificates', 'software-properties-common', 'python3-pip', 'python3-setuptools', 'gpg' ]
+    - basic_pkgs:
+        - apt-transport-https
+        - ca-certificates
+        - gpg
+        - python3-setuptools
+        - python3-pip
+        - software-properties-common
     - software_pkgs: [ 'wget', 'curl', 'git', 'vim', 'tmux', 'nmap' ]
     - vimrc: "{{ ansible_env.HOME }}/.vimrc"
   become: no
@@ -54,7 +60,8 @@
 
       - name: Add Docker repository
         ansible.builtin.apt_repository:
-          repo: deb https://download.docker.com/linux/ubuntu {{ release }} stable
+          repo: >
+            deb https://download.docker.com/linux/ubuntu {{ release }} stable
           filename: docker
 
       - name: Install docker-ce and docker-compose-plugin
