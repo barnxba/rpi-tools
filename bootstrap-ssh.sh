@@ -22,7 +22,7 @@ function mount_image {
 
 function update_passwd {
     echo "Setting new password for user pi"
-    pass=$(openssl passwd -1)
+    local pass=$(openssl passwd -1)
     sudo sed -i -e "s@^pi:[^:]\+@pi:${pass}@" $mount_dir/etc/shadow
 }
 
@@ -45,14 +45,14 @@ function disable_root_ssh {
 }
 
 function copy_ssh_key {
-    keyfile=~/.ssh/id_rsa.pub
+    local keyfile=~/.ssh/id_rsa.pub
     if [ ! -f $keyfile ]; then
         echo "Skipping SSH key copy -> no id_rsa.pub found in ~/.ssh"
         return
     fi
     echo "Copying public key from $(whoami)"
-    ssh_dir=$mount_dir/home/pi/.ssh
-    auth_file=$ssh_dir/authorized_keys
+    local ssh_dir=$mount_dir/home/pi/.ssh
+    local auth_file=$ssh_dir/authorized_keys
     if [ ! -d $ssh_dir ]; then
         sudo mkdir $ssh_dir
         sudo chmod 0700 $ssh_dir
@@ -63,7 +63,17 @@ function copy_ssh_key {
     sudo chown 1000:1000 $auth_file
 }
 
+function root_autocomplete {
+    echo "Enabling cli autocomplete for root"
+    local root_bashrc=$mount_dir/root/.bashrc
+    local pi_bashrc=$mount_dir/home/pi/.bashrc
+    echo | sudo tee -a $root_bashrc > /dev/null
+    sudo grep "enable programmable completion" -A9 $pi_bashrc | \
+    sudo tee -a $root_bashrc > /dev/null
+}
+
 function cleanup {
+    echo "Cleaning up"
     sudo umount $root
     sudo partx -d $loop_device
     sudo losetup -d $loop_device
@@ -91,5 +101,6 @@ remove_nopasswd_sudo
 enable_ssh
 disable_root_ssh
 copy_ssh_key
+root_autocomplete
 cleanup
 burn_info
