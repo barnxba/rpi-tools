@@ -1,6 +1,6 @@
 # rpi-tools
 
-Repository for helper scripts pertaining to my Raspberry Pi.
+Repository with helper scripts for setting up my Raspberry Pi.
 
 ## bootstrap-ssh.sh
 
@@ -16,11 +16,16 @@ Burn the image onto your SD card:
     
     sudo dd if=2022-04-04-raspios-bullseye-armhf-lite.img of=/dev/mmcblk0 \
         bs=4M oflag=dsync status=progress
-It will also remove the default *nopasswd* sudo access from **pi**.
+
+It will also:
+- update **pi**'s password
+- remove the default *nopasswd* sudo access from **pi**
+- copy your local SSH key for easy access
+- enable CLI autocomplete for **root**.
 
 ## ansible
 
-This folder contains an Ansible inventory file with my pi defined, Next to it are playbook folders.
+This folder contains an Ansible inventory file with my pi defined, next to it are playbook folders.
 Playbooks can be run using:
 
     ansible-playbook -i ./inventory -l rpi -K [playbook-folder]/playbook.yml
@@ -32,4 +37,4 @@ Playbooks can be run using:
 3. Install basic requirements
 4. Install basic software
 5. Install Docker from official Docker repos
-6. [...]
+6. Copy *vimrc* settings
