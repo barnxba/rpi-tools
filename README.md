@@ -25,7 +25,7 @@ Playbooks can be run using:
 
     ansible-playbook -i ./inventory -l rpi -K [playbook-folder]/playbook.yml
 
-# rpi-bootstrap
+### rpi-bootstrap
 
 1. Update APT cache
 2. Upgrade software with dist-upgrade
