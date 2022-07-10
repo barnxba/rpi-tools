@@ -7,38 +7,46 @@
 # 3. Install basic requirements
 # 4. Install basic software
 # 5. Install Docker from official Docker repos
+# 6. Install vimrc
 #
 ---
 - name: "Setup basic post-install tools"
   hosts: all
+  gather_facts: yes
   vars:
     - user: pi
     - release: focal
     - basic_pkgs: [ 'apt-transport-https', 'ca-certificates', 'software-properties-common', 'python3-pip', 'python3-setuptools', 'gpg' ]
     - software_pkgs: [ 'wget', 'curl', 'git', 'vim', 'tmux', 'nmap' ]
-  become: yes
+    - vimrc: "{{ ansible_env.HOME }}/.vimrc"
+  become: no
 
   tasks:
   - name: Refresh APT cache
+    become: yes
     ansible.builtin.apt:
       update_cache: yes
       cache_valid_time: 86400  # one day
 
   - name: Run dist-upgrade
+    become: yes
     ansible.builtin.apt:
       upgrade: dist
 
   - name: Install basic required packages
+    become: yes
     ansible.builtin.apt:
       name: "{{ basic_pkgs }}"
       state: latest
 
   - name: Install basic software -> curl, git, vim, tmux, etc.
+    become: yes
     ansible.builtin.apt:
       name: "{{ software_pkgs }}"
       state: latest
 
   - name: Install Docker
+    become: yes
     block:
       - name: Add Docker GPG key
         ansible.builtin.apt_key:
@@ -64,3 +72,10 @@
           name: "{{ user }}"
           groups: docker
           append: yes
+
+  - name: Install .vimrc
+    copy:
+      src: vimrc
+      dest: "{{ vimrc }}"
+      backup: yes
+      mode: 0640
