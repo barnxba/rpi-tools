@@ -1,0 +1,66 @@
+#
+# This playbook sets up basic RPi
+# functionality:
+#
+# 1. Update APT cache
+# 2. Upgrade software with dist-upgrade
+# 3. Install basic requirements
+# 4. Install basic software
+# 5. Install Docker from official Docker repos
+#
+---
+- name: "Setup basic post-install tools"
+  hosts: all
+  vars:
+    - user: pi
+    - release: focal
+    - basic_pkgs: [ 'apt-transport-https', 'ca-certificates', 'software-properties-common', 'python3-pip', 'python3-setuptools', 'gpg' ]
+    - software_pkgs: [ 'wget', 'curl', 'git', 'vim', 'tmux', 'nmap' ]
+  become: yes
+
+  tasks:
+  - name: Refresh APT cache
+    ansible.builtin.apt:
+      update_cache: yes
+      cache_valid_time: 86400  # one day
+
+  - name: Run dist-upgrade
+    ansible.builtin.apt:
+      upgrade: dist
+
+  - name: Install basic required packages
+    ansible.builtin.apt:
+      name: "{{ basic_pkgs }}"
+      state: latest
+
+  - name: Install basic software -> curl, git, vim, tmux, etc.
+    ansible.builtin.apt:
+      name: "{{ software_pkgs }}"
+      state: latest
+
+  - name: Install Docker
+    block:
+      - name: Add Docker GPG key
+        ansible.builtin.apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+
+      - name: Add Docker repository
+        ansible.builtin.apt_repository:
+          repo: deb https://download.docker.com/linux/ubuntu {{ release }} stable
+          filename: docker
+
+      - name: Install docker-ce and docker-compose-plugin
+        ansible.builtin.apt:
+          name: [ 'docker-ce', 'docker-compose-plugin' ]
+          state: latest
+
+      - name: Check for docker group
+        ansible.builtin.group:
+            name: docker
+            state: present
+
+      - name: Add {{ user }} user to docker group
+        ansible.builtin.user:
+          name: "{{ user }}"
+          groups: docker
+          append: yes
