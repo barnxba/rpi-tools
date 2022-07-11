@@ -1,6 +1,5 @@
 #
-# This playbook sets up basic RPi
-# functionality:
+# This playbook sets up basic RPi functionality:
 #
 # 1. Update APT cache
 # 2. Upgrade software with dist-upgrade
