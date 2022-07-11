@@ -15,13 +15,13 @@
   gather_facts: yes
   vars:
     - user: pi
-    - release: focal
     - basic_pkgs:
         - apt-transport-https
         - ca-certificates
-        - gpg
+        - gnupg
         - python3-setuptools
         - python3-pip
+        - virtualenv
         - software-properties-common
     - software_pkgs: [ 'wget', 'curl', 'git', 'vim', 'tmux', 'nmap' ]
     - vimrc: "{{ ansible_env.HOME }}/.vimrc"
@@ -53,15 +53,36 @@
 
   - name: Install Docker
     become: yes
+    vars:
+      - dist: "{{ ansible_distribution | lower }}"
+      - release: "{{ ansible_distribution_release }}"
+      - arch: armhf
+      - keyring_dir: /etc/apt/keyrings
+      - keyring_file: docker.gpg
+      - keyring_path: "{{ keyring_dir }}/{{ keyring_file }}"
     block:
-      - name: Add Docker GPG key
-        ansible.builtin.apt_key:
-          url: https://download.docker.com/linux/ubuntu/gpg
+      - name: Check if {{ keyring_dir }} exists
+        ansible.builtin.file:
+          path: "{{ keyring_dir }}"
+          state: directory
+
+      - name: Check if {{ keyring_path }} exists
+        ansible.builtin.stat:
+          path: "{{ keyring_path }}"
+        register: gpg_key_exists
+
+      - name: Download Docker GPG key
+        ansible.builtin.shell: >
+          rm -f {{ keyring_path }} &&
+          curl -fsSL https://download.docker.com/linux/{{ dist }}/gpg |
+          gpg --dearmor -o {{ keyring_path }}
+        when: not gpg_key_exists.stat.exists
 
       - name: Add Docker repository
         ansible.builtin.apt_repository:
           repo: >
-            deb https://download.docker.com/linux/ubuntu {{ release }} stable
+            deb [arch={{ arch }} signed-by={{ keyring_path }}]
+            https://download.docker.com/linux/{{ dist }} {{ release }} stable
           filename: docker
 
       - name: Install docker-ce and docker-compose-plugin
