@@ -14,7 +14,7 @@
   hosts: all
   gather_facts: yes
   vars:
-    - user: pi
+    - user: "{{ ansible_user }}"
     - basic_pkgs:
         - apt-transport-https
         - ca-certificates
