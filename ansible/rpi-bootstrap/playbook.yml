@@ -24,7 +24,6 @@
         - virtualenv
         - software-properties-common
     - software_pkgs: [ 'wget', 'curl', 'git', 'vim', 'tmux', 'nmap' ]
-    - vimrc: "{{ ansible_env.HOME }}/.vimrc"
   become: no
 
   tasks:
@@ -101,6 +100,8 @@
           append: yes
 
   - name: Install .vimrc
+    vars:
+    - vimrc: "{{ ansible_env.HOME }}/.vimrc"
     copy:
       src: vimrc
       dest: "{{ vimrc }}"
