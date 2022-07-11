@@ -4,7 +4,7 @@ Repository with helper scripts for setting up my Raspberry Pi.
 
 ## bootstrap-ssh.sh
 
-If you want want to enable SSH without having to use a monitor and a keyboard, this script will automatically modify the Raspberry OS image for you.
+If you want to enable SSH without having to use a monitor and a keyboard, this script will automatically modify the Raspberry OS image for you.
 
 Download the official image from the [Raspberry OS site](https://www.raspberrypi.com/software/operating-systems/) and unzip it with:
 
