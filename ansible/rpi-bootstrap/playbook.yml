@@ -73,7 +73,6 @@
 
       - name: Download Docker GPG key
         ansible.builtin.shell: >
-          rm -f {{ keyring_path }} &&
           curl -fsSL https://download.docker.com/linux/{{ dist }}/gpg |
           gpg --dearmor -o {{ keyring_path }}
         when: not gpg_key_exists.stat.exists
